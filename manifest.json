@@ -1,0 +1,19 @@
+
+{
+  "name": "LocoPT Image Maintenance Hub",
+  "short_name": "LocoPT",
+  "description": "A professional locomotive maintenance and record tracking system for railway divisions, featuring high-resolution camera capture, automated cloud synchronization, and secure admin management.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/725/725300.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

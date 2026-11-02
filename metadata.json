@@ -1,0 +1,7 @@
+{
+  "name": "LocoPT_Image 3.0",
+  "description": "A locomotive maintenance and record tracking system for railways, featuring camera capture and admin management.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

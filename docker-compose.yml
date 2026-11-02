@@ -1,0 +1,69 @@
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: locopt-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-elsbksc2012}
+      POSTGRES_DB: ${DB_NAME:-locopt}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-locopt}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - locopt-net
+    restart: always
+
+  minio:
+    image: minio/minio
+    container_name: locopt-storage
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - locopt-net
+    ports:
+      - "9001:9001"
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: locopt-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-elsbksc2012}
+      - DB_HOST=postgres
+      - DB_NAME=${DB_NAME:-locopt}
+      - MINIO_HOST=minio
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - locopt-net
+    restart: always
+
+networks:
+  locopt-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
